@@ -133,7 +133,19 @@ export default function AuthPage() {
             >
               Sign In
             </button>
-           button
+            <button
+              onClick={() => { setMode('signup'); setError(''); }}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                mode === 'signup'
+                  ? 'bg-teal-500 text-white shadow-md shadow-teal-500/20'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          <button
             onClick={handleGoogleSignIn}
             disabled={loading}
             className="w-full h-12 bg-white hover:bg-gray-50 text-slate-900 font-semibold rounded-xl text-base shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
@@ -153,19 +165,7 @@ export default function AuthPage() {
             <div className="flex-1 h-px bg-slate-700"></div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 mt-6
-              onClick={() => { setMode('signup'); setError(''); }}
-              className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                mode === 'signup'
-                  ? 'bg-teal-500 text-white shadow-md shadow-teal-500/20'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Sign Up
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 mt-6">
             {mode === 'signup' && (
               <div className="space-y-1.5">
                 <Label htmlFor="fullName" className="text-slate-300 font-medium">
