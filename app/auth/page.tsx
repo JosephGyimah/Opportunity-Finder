@@ -1,0 +1,232 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Compass, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+
+export default function AuthPage() {
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    if (mode === 'login') {
+      const { error } = await signIn(email, password);
+      if (error) {
+        setError(error.message);
+      } else {
+        router.push('/');
+      }
+    } else {
+      if (!fullName.trim()) {
+        setError('Full name is required');
+        setLoading(false);
+        return;
+      }
+      const { error } = await signUp(email, password, fullName);
+      if (error) {
+        setError(error.message);
+      } else {
+        router.push('/');
+      }
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 flex">
+      {/* Left panel */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex-col items-center justify-center p-12">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative z-10 max-w-md text-center">
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-500/30">
+              <Compass className="w-7 h-7 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-white">OpportunityAI</span>
+          </div>
+
+          <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
+            Your career journey starts here
+          </h2>
+          <p className="text-slate-400 text-lg mb-10 leading-relaxed">
+            Discover scholarships, internships, and jobs perfectly matched to your skills and goals using AI.
+          </p>
+
+          <div className="space-y-4">
+            {[
+              { icon: '🎯', text: 'AI-powered opportunity matching' },
+              { icon: '🌍', text: 'Curated global opportunities' },
+              { icon: '📊', text: 'Track applications effortlessly' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white/5 rounded-xl px-5 py-3 text-left">
+                <span className="text-2xl">{item.icon}</span>
+                <span className="text-slate-300 font-medium">{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-2 mb-8">
+            <div className="w-9 h-9 bg-teal-500 rounded-xl flex items-center justify-center">
+              <Compass className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-white">OpportunityAI</span>
+          </div>
+
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {mode === 'login' ? 'Welcome back' : 'Create your account'}
+            </h1>
+            <p className="text-slate-400">
+              {mode === 'login'
+                ? 'Sign in to access your personalized opportunities'
+                : 'Join thousands of students finding their perfect opportunities'}
+            </p>
+          </div>
+
+          {/* Mode toggle */}
+          <div className="flex bg-slate-800 rounded-xl p-1 mb-8">
+            <button
+              onClick={() => { setMode('login'); setError(''); }}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                mode === 'login'
+                  ? 'bg-teal-500 text-white shadow-md shadow-teal-500/20'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => { setMode('signup'); setError(''); }}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                mode === 'signup'
+                  ? 'bg-teal-500 text-white shadow-md shadow-teal-500/20'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {mode === 'signup' && (
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName" className="text-slate-300 font-medium">
+                  Full Name
+                </Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="John Doe"
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-500 focus:ring-teal-500/20 h-12 rounded-xl"
+                  required
+                />
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-slate-300 font-medium">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-500 focus:ring-teal-500/20 h-12 rounded-xl"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-slate-300 font-medium">
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-500 focus:ring-teal-500/20 h-12 rounded-xl pr-12"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl text-base shadow-lg shadow-teal-500/20 transition-all disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  {mode === 'login' ? 'Signing in...' : 'Creating account...'}
+                </span>
+              ) : (
+                <>
+                  {mode === 'login' ? 'Sign In' : 'Create Account'}
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-8 flex items-center gap-3 bg-slate-800/50 rounded-xl p-4">
+            <Sparkles className="w-5 h-5 text-teal-400 shrink-0" />
+            <p className="text-slate-400 text-sm">
+              Upload your CV after signing in and let our AI find the best matching opportunities for you.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
