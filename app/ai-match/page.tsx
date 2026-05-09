@@ -213,7 +213,7 @@ export default function AIMatchPage() {
                   <h2 className="text-headline-md text-2xl font-semibold text-primary">Upload your CV</h2>
                   <p className="text-sm text-on-surface-variant mt-1">Paste text or upload a plain text file.</p>
                 </div>
-                <span className="material-symbols-outlined text-on-tertiary-fixed-variant text-[24px]">upload_file</span>
+                <Upload className="w-6 h-6 text-on-tertiary-fixed-variant shrink-0" aria-hidden="true" />
               </div>
 
               <div className="flex bg-surface-container rounded-full p-1 mb-6 border border-outline-variant/70 w-fit">
@@ -329,7 +329,7 @@ export default function AIMatchPage() {
             <div className="tactile-card rounded-2xl p-6 sm:p-8">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-xl font-semibold text-primary">Extracted skills</h3>
-                <span className="material-symbols-outlined text-on-tertiary-fixed-variant text-[22px]">auto_awesome</span>
+                <Sparkles className="w-[22px] h-[22px] text-on-tertiary-fixed-variant shrink-0" aria-hidden="true" />
               </div>
 
               {analysisText ? (
