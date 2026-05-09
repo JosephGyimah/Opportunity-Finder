@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { opportunities } from '@/lib/opportunities';
+import { opportunities, type Opportunity } from '@/lib/opportunities';
 import OpportunityCard from '@/components/OpportunityCard';
 import { Input } from '@/components/ui/input';
 import { Sparkles, Search, ArrowRight, Bookmark, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { rankOpportunitiesByTags } from '@/lib/opportunityInsights';
 
 export default function HomePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -20,6 +23,27 @@ export default function HomePage() {
     }
   }, [user, loading, router]);
 
+  const recommendedTags = useMemo(() => {
+    const tags = searchParams.get('tags');
+    if (!tags) return [];
+    return tags
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }, [searchParams]);
+
+  const recommendedOpportunities = useMemo(() => {
+    if (recommendedTags.length === 0) return [];
+
+    return rankOpportunitiesByTags(recommendedTags)
+      .map((match) => ({
+        opportunity: opportunities.find((opp) => opp.id === match.opportunity_id),
+        score: match.score,
+        reason: match.reason,
+      }))
+      .filter((item): item is { opportunity: Opportunity; score: number; reason: string } => Boolean(item.opportunity));
+  }, [recommendedTags]);
+
   const filteredOpportunities = useMemo(() => {
     return opportunities.filter((opp) =>
       opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -27,6 +51,8 @@ export default function HomePage() {
       opp.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [searchTerm]);
+
+  const isRecommendationView = recommendedOpportunities.length > 0;
 
   if (loading) {
     return (
@@ -104,7 +130,41 @@ export default function HomePage() {
           </div>
         </section>
 
-        {filteredOpportunities.length === 0 ? (
+        {recommendedTags.length > 0 && (
+          <div className="tactile-card rounded-2xl p-5 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] font-semibold text-on-tertiary-fixed-variant mb-1">CV analysis view</p>
+              <h2 className="text-lg font-semibold text-primary">Recommended opportunities based on your CV</h2>
+              <p className="text-sm text-on-surface-variant mt-1">Showing opportunities ranked from the tags passed from your CV analysis.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {recommendedTags.slice(0, 4).map((tag) => (
+                <span key={tag} className="px-3 py-1.5 rounded-full bg-surface-container text-xs font-semibold text-primary">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isRecommendationView ? (
+          recommendedOpportunities.length === 0 ? (
+            <div className="tactile-card rounded-2xl p-12 text-center">
+              <p className="text-on-surface-variant text-lg">No strong recommended opportunities were found for this CV analysis.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {recommendedOpportunities.map(({ opportunity, score, reason }) => (
+                <OpportunityCard
+                  key={opportunity.id}
+                  opportunity={opportunity}
+                  matchScore={score}
+                  matchReason={reason}
+                />
+              ))}
+            </div>
+          )
+        ) : filteredOpportunities.length === 0 ? (
           <div className="tactile-card rounded-2xl p-12 text-center">
             <p className="text-on-surface-variant text-lg">No opportunities found matching “{searchTerm}”</p>
           </div>

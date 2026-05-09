@@ -188,10 +188,16 @@ export default function DashboardPage() {
               <h2 className="text-2xl sm:text-[2rem] font-semibold tracking-tight text-primary">Opportunities for you</h2>
               <p className="text-sm sm:text-base text-on-surface-variant">Based on your saved interests and profile</p>
             </div>
-            <button className="inline-flex items-center gap-2 text-on-tertiary-fixed-variant font-semibold hover:underline">
-              <Search className="w-4 h-4" />
-              View all
-            </button>
+            {(() => {
+              const viewAllTags = savedSkillSignals.length > 0 ? savedSkillSignals : savedTags;
+              const href = viewAllTags.length ? `/?tags=${encodeURIComponent(viewAllTags.join(','))}` : '/';
+              return (
+                <Link href={href} className="inline-flex items-center gap-2 text-on-tertiary-fixed-variant font-semibold hover:underline">
+                  <Search className="w-4 h-4" />
+                  View all recommended
+                </Link>
+              );
+            })()}
           </div>
 
           {fetchingData ? (
