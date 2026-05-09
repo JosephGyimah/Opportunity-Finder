@@ -62,11 +62,9 @@ export default function AIMatchPage() {
     }
 
     try {
-      const response = await fetch('/api/ai-match', {
+      const response = await fetch('/api/match', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cvText: cv }),
       });
 
@@ -74,8 +72,28 @@ export default function AIMatchPage() {
         throw new Error('Gemini matching is temporarily unavailable.');
       }
 
-      const data = (await response.json()) as { matches?: MatchResult[] };
-      const results = Array.isArray(data.matches) && data.matches.length > 0 ? data.matches : rankOpportunitiesByText(cv);
+      const data = await response.json();
+
+      // Expect strict JSON array: [{ title, matchScore, reason }, ...]
+      let results: MatchResult[] = [];
+      if (Array.isArray(data) && data.length > 0) {
+        const top = (data as any[]).slice(0, 3);
+        results = top
+          .map((m) => {
+            const title = String(m.title || '').trim();
+            const score = Number(m.matchScore) || 0;
+            const reason = String(m.reason || '').trim();
+            const found = opportunities.find((o) => o.title.toLowerCase() === title.toLowerCase() || o.title.toLowerCase().includes(title.toLowerCase()));
+            if (!found) return null;
+            return { opportunity_id: found.id, score: Math.max(0, Math.min(100, Math.round(score))), reason } as MatchResult;
+          })
+          .filter(Boolean) as MatchResult[];
+      }
+
+      // Fallback to local ranking if AI returned nothing usable
+      if (!results || results.length === 0) {
+        results = rankOpportunitiesByText(cv);
+      }
 
       setAnalysisText(cv);
       setMatches(results);
@@ -87,7 +105,7 @@ export default function AIMatchPage() {
       setDone(true);
 
       if (results.length === 0) {
-        setError(err.message || 'Something went wrong. Please try again.');
+        setError(err?.message || 'Something went wrong. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -119,7 +137,7 @@ export default function AIMatchPage() {
         <div className="text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 bg-on-tertiary-fixed-variant/10 border border-on-tertiary-fixed-variant/20 rounded-full px-4 py-2 mb-4">
             <Brain className="w-4 h-4 text-on-tertiary-fixed-variant" />
-            <span className="text-on-tertiary-fixed-variant text-sm font-semibold">Navigator AI matching</span>
+            <span className="text-on-tertiary-fixed-variant text-sm font-semibold">Opportunity Finder matching</span>
           </div>
           <h1 className="text-[2rem] sm:text-4xl font-semibold tracking-tight text-primary mb-3">Upload your CV</h1>
           <p className="text-on-surface-variant text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">

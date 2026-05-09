@@ -43,7 +43,7 @@ export default function HomePage() {
           <div className="lg:col-span-8 tactile-card rounded-2xl p-8 sm:p-10">
             <div className="inline-flex items-center gap-2 bg-on-tertiary-fixed-variant/10 border border-on-tertiary-fixed-variant/20 rounded-full px-4 py-2 mb-5">
               <Sparkles className="w-4 h-4 text-on-tertiary-fixed-variant" />
-              <span className="text-on-tertiary-fixed-variant text-sm font-semibold">Navigator AI discovery feed</span>
+              <span className="text-on-tertiary-fixed-variant text-sm font-semibold">Opportunity Finder discovery feed</span>
             </div>
             <h1 className="text-[2rem] sm:text-5xl font-semibold tracking-tight text-primary mb-4 leading-tight">
               Discover opportunities with precision.

@@ -29,10 +29,19 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 bg-primary-container rounded-xl flex items-center justify-center group-hover:bg-primary transition-colors shadow-[0_10px_30px_-12px_rgba(0,31,63,0.18)]">
-              <Compass className="w-4.5 h-4.5 text-on-primary" />
+            <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-primary-container group-hover:bg-primary transition-colors shadow-[0_10px_30px_-12px_rgba(0,31,63,0.18)] p-1">
+              <img
+                src="/opportunity-finder-logo.png"
+                alt="Opportunity Finder"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  const img = e.currentTarget as HTMLImageElement;
+                  img.onerror = null;
+                  img.src = '/favicon.svg';
+                }}
+              />
             </div>
-            <span className="text-primary font-semibold text-lg hidden sm:block">Navigator AI</span>
+            <span className="text-primary font-semibold text-lg hidden sm:block">Opportunity Finder</span>
           </Link>
 
           {/* Desktop Nav */}

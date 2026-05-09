@@ -71,11 +71,20 @@ export default function AuthPage() {
           <div className="absolute bottom-10 right-12 w-56 h-56 rounded-full bg-secondary-fixed/15 blur-3xl" />
 
           <div className="relative z-10 max-w-md text-center">
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center shadow-lg shadow-[0_10px_30px_-12px_rgba(0,31,63,0.22)]">
-                <Compass className="w-7 h-7 text-primary" />
+              <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center shadow-lg shadow-[0_10px_30px_-12px_rgba(0,31,63,0.22)] p-1">
+                <img
+                  src="/opportunity-finder-logo.png"
+                  alt="Opportunity Finder"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    const img = e.currentTarget as HTMLImageElement;
+                    img.onerror = null;
+                    img.src = '/favicon.svg';
+                  }}
+                />
               </div>
-              <span className="text-2xl font-semibold tracking-tight">Navigator AI</span>
+              <span className="text-2xl font-semibold tracking-tight">Opportunity Finder</span>
             </div>
 
             <h2 className="text-4xl font-semibold tracking-tight leading-tight mb-4">Chart your path with precision.</h2>
@@ -101,10 +110,19 @@ export default function AuthPage() {
         <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
           <div className="w-full max-w-md">
             <div className="lg:hidden flex items-center gap-2 mb-8">
-              <div className="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center">
-                <Compass className="w-5 h-5 text-on-primary" />
+              <div className="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center p-1">
+                <img
+                  src="/opportunity-finder-logo.png"
+                  alt="Opportunity Finder"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    const img = e.currentTarget as HTMLImageElement;
+                    img.onerror = null;
+                    img.src = '/favicon.svg';
+                  }}
+                />
               </div>
-              <span className="text-xl font-semibold tracking-tight text-primary">Navigator AI</span>
+              <span className="text-xl font-semibold tracking-tight text-primary">Opportunity Finder</span>
             </div>
 
             <div className="tactile-card rounded-2xl p-6 sm:p-8">
@@ -119,7 +137,7 @@ export default function AuthPage() {
                 <p className="text-on-surface-variant text-sm leading-relaxed">
                   {mode === 'login'
                     ? 'Sign in to access your personalized opportunities and saved matches.'
-                    : 'Join Navigator AI and start building a sharper career search.'}
+                    : 'Join Opportunity Finder and start building a sharper career search.'}
                 </p>
               </div>
 
