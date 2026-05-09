@@ -191,11 +191,11 @@ export const getOpportunityById = (id: string): Opportunity | undefined => {
 };
 
 export const typeColors: Record<OpportunityType, string> = {
-  internship: 'bg-blue-100 text-blue-700',
-  scholarship: 'bg-emerald-100 text-emerald-700',
-  job: 'bg-orange-100 text-orange-700',
-  fellowship: 'bg-cyan-100 text-cyan-700',
-  grant: 'bg-rose-100 text-rose-700',
+  internship: 'bg-primary-container/10 text-primary-container',
+  scholarship: 'bg-secondary-container text-on-secondary-container',
+  job: 'bg-tertiary-fixed/80 text-on-tertiary-fixed-variant',
+  fellowship: 'bg-primary-fixed/70 text-on-primary-fixed-variant',
+  grant: 'bg-tertiary-container/10 text-on-tertiary-container',
 };
 
 export const typeLabels: Record<OpportunityType, string> = {

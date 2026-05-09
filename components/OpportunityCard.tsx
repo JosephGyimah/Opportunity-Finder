@@ -56,7 +56,7 @@ export default function OpportunityCard({
   };
 
   return (
-    <div className="group bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 hover:shadow-xl hover:shadow-black/20 transition-all duration-200 flex flex-col gap-4">
+    <div className="group bg-surface-container-lowest border border-transparent rounded-2xl p-5 sm:p-6 navy-shadow hover:border-primary/10 hover:shadow-md transition-all duration-200 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">
@@ -64,14 +64,14 @@ export default function OpportunityCard({
             <img
               src={opportunity.logo}
               alt={opportunity.organization}
-              className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-slate-700"
+              className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-outline-variant/60"
             />
           )}
           <div className="min-w-0">
-            <h3 className="font-semibold text-white text-sm leading-snug line-clamp-2 group-hover:text-teal-300 transition-colors">
+            <h3 className="font-semibold text-primary text-sm leading-snug line-clamp-2 group-hover:text-on-tertiary-fixed-variant transition-colors">
               {opportunity.title}
             </h3>
-            <p className="text-slate-400 text-xs mt-0.5">{opportunity.organization}</p>
+            <p className="text-on-surface-variant text-xs mt-0.5">{opportunity.organization}</p>
           </div>
         </div>
         <button
@@ -79,8 +79,8 @@ export default function OpportunityCard({
           disabled={saving}
           className={`shrink-0 p-2 rounded-xl transition-all ${
             isSaved
-              ? 'bg-teal-500/10 text-teal-400 hover:bg-teal-500/20'
-              : 'bg-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-700'
+              ? 'bg-on-tertiary-fixed-variant/10 text-on-tertiary-fixed-variant hover:bg-on-tertiary-fixed-variant/20'
+              : 'bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high'
           }`}
           title={isSaved ? 'Remove from saved' : 'Save opportunity'}
         >
@@ -94,32 +94,32 @@ export default function OpportunityCard({
 
       {/* Type badge + match score */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${typeColors[opportunity.type]}`}>
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${typeColors[opportunity.type]} border border-transparent`}>
           {typeLabels[opportunity.type]}
         </span>
         {matchScore !== undefined && (
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-teal-500/15 text-teal-400 border border-teal-500/30">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-on-tertiary-fixed-variant/10 text-on-tertiary-fixed-variant border border-on-tertiary-fixed-variant/20">
             {matchScore}% match
           </span>
         )}
       </div>
 
       {/* Description */}
-      <p className="text-slate-400 text-xs leading-relaxed line-clamp-3">
+      <p className="text-on-surface-variant text-xs leading-relaxed line-clamp-3">
         {opportunity.description}
       </p>
 
       {/* Match reason */}
       {matchReason && (
-        <div className="bg-teal-500/5 border border-teal-500/20 rounded-xl p-3">
-          <p className="text-teal-300 text-xs leading-relaxed">
+        <div className="bg-surface-container-low rounded-xl p-3 border border-on-tertiary-fixed-variant/15">
+          <p className="text-on-surface text-xs leading-relaxed">
             <span className="font-semibold">Why it matches: </span>{matchReason}
           </p>
         </div>
       )}
 
       {/* Meta info */}
-      <div className="flex flex-wrap gap-3 text-xs text-slate-500">
+      <div className="flex flex-wrap gap-3 text-xs text-on-surface-variant">
         <span className="flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5" />
           {opportunity.location}
@@ -129,7 +129,7 @@ export default function OpportunityCard({
           {opportunity.deadline === 'Rolling' ? 'Rolling deadline' : `Due ${opportunity.deadline}`}
         </span>
         {opportunity.stipend && (
-          <span className="flex items-center gap-1 text-emerald-500">
+          <span className="flex items-center gap-1 text-secondary">
             <DollarSign className="w-3.5 h-3.5" />
             {opportunity.stipend}
           </span>
@@ -139,12 +139,12 @@ export default function OpportunityCard({
       {/* Tags */}
       <div className="flex flex-wrap gap-1.5">
         {opportunity.tags.slice(0, 3).map((tag) => (
-          <span key={tag} className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">
+          <span key={tag} className="text-xs bg-surface-container text-on-surface-variant px-2 py-0.5 rounded-md">
             {tag}
           </span>
         ))}
         {opportunity.tags.length > 3 && (
-          <span className="text-xs bg-slate-800 text-slate-500 px-2 py-0.5 rounded-md">
+          <span className="text-xs bg-surface-container text-outline px-2 py-0.5 rounded-md">
             +{opportunity.tags.length - 3}
           </span>
         )}
@@ -155,7 +155,7 @@ export default function OpportunityCard({
         href={opportunity.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-auto flex items-center justify-center gap-1.5 w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold transition-all group/btn"
+        className="mt-auto flex items-center justify-center gap-1.5 w-full py-2.5 bg-primary hover:bg-on-surface text-on-primary rounded-xl text-xs font-semibold transition-all group/btn"
         onClick={(e) => e.stopPropagation()}
       >
         View Opportunity

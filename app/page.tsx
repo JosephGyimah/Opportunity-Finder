@@ -1,18 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { opportunities } from '@/lib/opportunities';
 import OpportunityCard from '@/components/OpportunityCard';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Search } from 'lucide-react';
+import { Sparkles, Search, ArrowRight, Bookmark, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredOpportunities, setFilteredOpportunities] = useState(opportunities);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -20,52 +20,102 @@ export default function HomePage() {
     }
   }, [user, loading, router]);
 
-  useEffect(() => {
-    const filtered = opportunities.filter((opp) =>
+  const filteredOpportunities = useMemo(() => {
+    return opportunities.filter((opp) =>
       opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       opp.organization.toLowerCase().includes(searchTerm.toLowerCase()) ||
       opp.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     );
-    setFilteredOpportunities(filtered);
   }, [searchTerm]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-on-tertiary-fixed-variant border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-white mb-4">Discover Opportunities</h1>
-        <p className="text-slate-400 text-lg">Find scholarships, internships, and jobs that match your skills</p>
-      </div>
+    <div className="min-h-screen bg-surface">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10 items-stretch">
+          <div className="lg:col-span-8 tactile-card rounded-2xl p-8 sm:p-10">
+            <div className="inline-flex items-center gap-2 bg-on-tertiary-fixed-variant/10 border border-on-tertiary-fixed-variant/20 rounded-full px-4 py-2 mb-5">
+              <Sparkles className="w-4 h-4 text-on-tertiary-fixed-variant" />
+              <span className="text-on-tertiary-fixed-variant text-sm font-semibold">Navigator AI discovery feed</span>
+            </div>
+            <h1 className="text-[2rem] sm:text-5xl font-semibold tracking-tight text-primary mb-4 leading-tight">
+              Discover opportunities with precision.
+            </h1>
+            <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed mb-8">
+              Search scholarships, internships, and jobs that align with your interests, then save the ones worth chasing.
+            </p>
 
-      <div className="mb-8 relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-        <Input
-          type="search"
-          placeholder="Search opportunities..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-500 pl-10 h-12 rounded-lg"
-        />
-      </div>
+            <div className="relative max-w-2xl">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-outline" />
+              <Input
+                type="search"
+                placeholder="Search opportunities, tags, organizations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-14 rounded-2xl pl-12 bg-surface border-outline-variant text-primary placeholder:text-outline focus-visible:ring-on-tertiary-fixed-variant/20 focus-visible:border-on-tertiary-fixed-variant"
+              />
+            </div>
 
-      {filteredOpportunities.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-slate-400 text-lg">No opportunities found matching "{searchTerm}"</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredOpportunities.map((opportunity) => (
-            <OpportunityCard key={opportunity.id} opportunity={opportunity} />
-          ))}
-        </div>
-      )}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {['Internships', 'Scholarships', 'Fellowships', 'Remote', 'Africa'].map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => setSearchTerm(chip)}
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold bg-surface-container text-on-surface-variant hover:bg-secondary-container hover:text-primary transition-colors"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-4 flex flex-col gap-4">
+            <div className="bg-on-tertiary-fixed-variant text-on-tertiary rounded-2xl p-6 sm:p-8 shadow-[0_10px_30px_-12px_rgba(0,31,63,0.18)] flex-1">
+              <div className="flex items-center gap-2 mb-4">
+                <Bookmark className="w-5 h-5" />
+                <span className="text-sm font-semibold uppercase tracking-[0.18em]">Saved focus</span>
+              </div>
+              <div className="text-3xl font-semibold mb-2">{filteredOpportunities.length}</div>
+              <p className="text-sm opacity-90 leading-relaxed mb-6">
+                Opportunities currently matching your search and profile keywords.
+              </p>
+              <Link href="/dashboard" className="inline-flex items-center gap-2 bg-surface text-on-tertiary-fixed-variant px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-surface-container-low transition-all">
+                Go to dashboard
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="bg-surface-container-lowest rounded-2xl p-6 navy-shadow border border-outline-variant/10">
+              <div className="flex items-center gap-2 mb-3 text-on-tertiary-fixed-variant font-semibold text-sm uppercase tracking-[0.18em]">
+                <TrendingUp className="w-4 h-4" />
+                Trending now
+              </div>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                Use AI Match to rank opportunities from a CV, then save the strongest ones to your dashboard.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {filteredOpportunities.length === 0 ? (
+          <div className="tactile-card rounded-2xl p-12 text-center">
+            <p className="text-on-surface-variant text-lg">No opportunities found matching “{searchTerm}”</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredOpportunities.map((opportunity) => (
+              <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
