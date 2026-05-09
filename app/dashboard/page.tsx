@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
 import { opportunities, getOpportunityById } from '@/lib/opportunities';
 import OpportunityCard from '@/components/OpportunityCard';
 import { useRouter } from 'next/navigation';
@@ -12,10 +12,17 @@ import { LayoutDashboard, Bookmark, Sparkles, TrendingUp, ArrowRight, Search, Pl
 import Link from 'next/link';
 import { getOpportunitySeedTags, rankOpportunitiesByTags } from '@/lib/opportunityInsights';
 
+interface ProfileActivity {
+  skillSignals?: string[];
+  aiMatchRuns?: number;
+  cvSubmissions?: number;
+}
+
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [profileActivity, setProfileActivity] = useState<ProfileActivity>({});
   const [fetchingData, setFetchingData] = useState(true);
 
   useEffect(() => {
@@ -27,20 +34,21 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return;
 
-    const loadSavedOpportunities = async () => {
+    const loadProfileData = async () => {
       try {
-        const savedQuery = query(
-          collection(db, 'users', user.uid, 'savedOpportunities'),
-          orderBy('savedAt', 'desc'),
-        );
-        const snapshot = await getDocs(savedQuery);
-        setSavedIds(snapshot.docs.map((item) => item.data().opportunityId as string));
+        const [savedSnapshot, userSnapshot] = await Promise.all([
+          getDocs(query(collection(db, 'users', user.uid, 'savedOpportunities'), orderBy('savedAt', 'desc'))),
+          getDoc(doc(db, 'users', user.uid)),
+        ]);
+
+        setSavedIds(savedSnapshot.docs.map((item) => item.data().opportunityId as string));
+        setProfileActivity((userSnapshot.data() as ProfileActivity | undefined) ?? {});
       } finally {
         setFetchingData(false);
       }
     };
 
-    void loadSavedOpportunities();
+    void loadProfileData();
   }, [user]);
 
   const handleSaveToggle = (id: string, saved: boolean) => {
@@ -72,7 +80,17 @@ export default function DashboardPage() {
   }, {});
 
   const topInterest = Object.entries(tagFrequency).sort((a, b) => b[1] - a[1])[0]?.[0];
-  const profileStrength = Math.max(48, Math.min(98, 58 + savedTags.length * 4 + savedIds.length * 3));
+  const savedSkillSignals = profileActivity.skillSignals ?? [];
+  const aiMatchRuns = profileActivity.aiMatchRuns ?? 0;
+  const cvSubmissions = profileActivity.cvSubmissions ?? 0;
+  const profileStrength = Math.min(
+    100,
+    (savedSkillSignals.length * 12) +
+    (aiMatchRuns * 10) +
+    (cvSubmissions * 6) +
+    (savedIds.length * 6) +
+    (savedTags.length * 3),
+  );
 
   if (loading) {
     return (
@@ -107,7 +125,7 @@ export default function DashboardPage() {
       icon: Sparkles,
       color: 'text-secondary',
       bg: 'bg-secondary-container',
-      note: 'Profile is healthy',
+      note: profileStrength === 0 ? 'Start with skills or a CV' : 'Profile is growing from your activity',
     },
   ];
 

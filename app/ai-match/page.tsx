@@ -1,7 +1,9 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import { arrayUnion, doc, increment, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
+import { db } from '@/lib/firebase';
 import { opportunities } from '@/lib/opportunities';
 import OpportunityCard from '@/components/OpportunityCard';
 import { deriveCareerPaths, extractSkills, rankOpportunitiesByText, type MatchResult } from '@/lib/opportunityInsights';
@@ -55,6 +57,8 @@ export default function AIMatchPage() {
       cv = await extractTextFromFile(file);
     }
 
+    const detectedSkillsFromCv = extractSkills(cv);
+
     if (!cv || cv.length < 50) {
       setError('Please provide a more detailed CV (at least 50 characters).');
       setLoading(false);
@@ -98,11 +102,35 @@ export default function AIMatchPage() {
       setAnalysisText(cv);
       setMatches(results);
       setDone(true);
+
+      const profileUpdate: Record<string, unknown> = {
+        aiMatchRuns: increment(1),
+        cvSubmissions: increment(1),
+        lastProfileActivityAt: new Date().toISOString(),
+      };
+
+      if (detectedSkillsFromCv.length > 0) {
+        profileUpdate.skillSignals = arrayUnion(...detectedSkillsFromCv);
+      }
+
+      await setDoc(doc(db, 'users', user.uid), profileUpdate, { merge: true });
     } catch (err: any) {
       const results = rankOpportunitiesByText(cv);
       setAnalysisText(cv);
       setMatches(results);
       setDone(true);
+
+      const profileUpdate: Record<string, unknown> = {
+        aiMatchRuns: increment(1),
+        cvSubmissions: increment(1),
+        lastProfileActivityAt: new Date().toISOString(),
+      };
+
+      if (detectedSkillsFromCv.length > 0) {
+        profileUpdate.skillSignals = arrayUnion(...detectedSkillsFromCv);
+      }
+
+      await setDoc(doc(db, 'users', user.uid), profileUpdate, { merge: true }).catch(() => undefined);
 
       if (results.length === 0) {
         setError(err?.message || 'Something went wrong. Please try again.');

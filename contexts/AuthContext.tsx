@@ -37,6 +37,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         fullName,
         createdAt: new Date().toISOString(),
+        profileStrength: 0,
+        skillSignals: [],
+        aiMatchRuns: 0,
+        cvSubmissions: 0,
       });
       return { error: null };
     } catch (error) {
@@ -64,6 +68,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: googleUser.email,
         fullName: googleUser.displayName,
         createdAt: new Date().toISOString(),
+        profileStrength: 0,
+        skillSignals: [],
+        aiMatchRuns: 0,
+        cvSubmissions: 0,
       }, { merge: true });
       
       return { error: null };
