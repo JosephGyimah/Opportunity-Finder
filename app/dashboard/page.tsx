@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
@@ -11,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { LayoutDashboard, Bookmark, Sparkles, TrendingUp, ArrowRight, Search, Plus, Brain, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { getOpportunitySeedTags, rankOpportunitiesByTags } from '@/lib/opportunityInsights';
+import OpportunityLogo from '@/components/OpportunityLogo';
 
 interface ProfileActivity {
   skillSignals?: string[];
@@ -218,13 +218,13 @@ export default function DashboardPage() {
                 <div key={opportunity!.id} className="bg-surface-container-lowest p-6 rounded-2xl navy-shadow border border-transparent hover:border-primary/10 hover:shadow-md transition-all group flex flex-col gap-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 min-w-0">
-                      {opportunity!.logo ? (
-                        <Image src={opportunity!.logo} alt={opportunity!.organization} className="w-12 h-12 rounded-xl object-cover shrink-0 ring-1 ring-outline-variant/60" width={48} height={48} />
-                      ) : (
-                        <div className="w-12 h-12 bg-surface-container rounded-xl flex items-center justify-center font-semibold text-primary text-lg shrink-0">
-                          {opportunity!.organization.charAt(0)}
-                        </div>
-                      )}
+                      <OpportunityLogo
+                        src={opportunity!.logo}
+                        alt={opportunity!.organization}
+                        label={opportunity!.organization}
+                        size={48}
+                        className="w-12 h-12"
+                      />
                       <div className="min-w-0">
                         <h3 className="text-lg font-semibold text-primary leading-snug line-clamp-2 group-hover:text-on-tertiary-fixed-variant transition-colors">{opportunity!.title}</h3>
                         <p className="text-sm text-on-surface-variant mt-0.5">{opportunity!.organization}</p>

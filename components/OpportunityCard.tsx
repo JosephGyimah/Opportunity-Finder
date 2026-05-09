@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Opportunity, typeColors, typeLabels } from '@/lib/opportunities';
 import { MapPin, Calendar, Bookmark, BookmarkCheck, ExternalLink, DollarSign } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import OpportunityLogo from '@/components/OpportunityLogo';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -61,15 +61,13 @@ export default function OpportunityCard({
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">
-          {opportunity.logo && (
-            <Image
-              src={opportunity.logo}
-              alt={opportunity.organization}
-              className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-outline-variant/60"
-              width={40}
-              height={40}
-            />
-          )}
+          <OpportunityLogo
+            src={opportunity.logo}
+            alt={opportunity.organization}
+            label={opportunity.organization}
+            size={40}
+            className="w-10 h-10"
+          />
           <div className="min-w-0">
             <h3 className="font-semibold text-primary text-sm leading-snug line-clamp-2 group-hover:text-on-tertiary-fixed-variant transition-colors">
               {opportunity.title}
