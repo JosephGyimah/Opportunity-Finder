@@ -83,14 +83,7 @@ export default function DashboardPage() {
   const savedSkillSignals = profileActivity.skillSignals ?? [];
   const aiMatchRuns = profileActivity.aiMatchRuns ?? 0;
   const cvSubmissions = profileActivity.cvSubmissions ?? 0;
-  const profileStrength = Math.min(
-    100,
-    (savedSkillSignals.length * 12) +
-    (aiMatchRuns * 10) +
-    (cvSubmissions * 6) +
-    (savedIds.length * 6) +
-    (savedTags.length * 3),
-  );
+  const profileStrength = Math.min(100, (savedSkillSignals.length * 15) + (aiMatchRuns * 8) + (cvSubmissions * 10));
 
   if (loading) {
     return (
@@ -125,7 +118,7 @@ export default function DashboardPage() {
       icon: Sparkles,
       color: 'text-secondary',
       bg: 'bg-secondary-container',
-      note: profileStrength === 0 ? 'Start with skills or a CV' : 'Profile is growing from your activity',
+      note: profileStrength === 0 ? 'Start with a CV analysis' : 'Profile is growing from your CV analysis',
     },
   ];
 
@@ -299,6 +292,36 @@ export default function DashboardPage() {
                 ))}
               </div>
             )}
+          </section>
+        )}
+
+        {savedTags.length > 0 && (
+          <section className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp className="w-5 h-5 text-on-tertiary-fixed-variant" />
+              <h2 className="text-lg font-semibold text-primary">Saved tags</h2>
+              <span className="bg-surface-container text-on-surface-variant text-xs px-2 py-0.5 rounded-full">{savedTags.length}</span>
+            </div>
+
+            <div className="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 navy-shadow border border-outline-variant/10">
+              <p className="text-sm text-on-surface-variant mb-4">
+                These tags were inferred from your saved opportunities and are used to shape your recommendations.
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                {savedTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-surface-container-high text-sm font-semibold text-primary"
+                  >
+                    {tag}
+                    <span className="text-xs font-semibold text-on-surface-variant bg-surface px-2 py-0.5 rounded-full">
+                      {tagFrequency[tag] ?? 0}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
           </section>
         )}
       </div>

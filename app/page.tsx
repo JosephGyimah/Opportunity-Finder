@@ -64,7 +64,7 @@ export default function HomePage() {
             </div>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              {['Internships', 'Scholarships', 'Fellowships', 'Remote', 'Africa'].map((chip) => (
+              {['Internships', 'Scholarships', 'Remote', 'Africa'].map((chip) => (
                 <button
                   key={chip}
                   onClick={() => setSearchTerm(chip)}
