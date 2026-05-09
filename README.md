@@ -1,197 +1,180 @@
 # Opportunity Finder
 
-A Next.js application that helps users discover and match job opportunities with their CV using AI-powered matching.
+Opportunity Finder is a Next.js application for discovering and matching curated job and opportunity listings against a user's CV using AI.
 
-## Overview
+## What it does
 
-Opportunity Finder is a web application designed to:
-- **Browse opportunities** - Explore available job opportunities
-- **Save opportunities** - Bookmark interesting opportunities for later review
-- **AI-powered matching** - Upload your CV and get intelligent opportunity recommendations with match scores and reasoning
-- **Dashboard** - Manage and view all your saved opportunities in one place
+- Browse curated opportunities in a clean interface
+- Save and bookmark opportunities to a personal dashboard
+- Upload or paste your CV/resume for AI-powered matching
+- Receive ranked opportunity recommendations with match scores and reasoning
+- Use a responsive UI built with Tailwind CSS and shadcn/ui
 
-## How It Works
+## Key features
 
-1. **Authentication**: Users sign up/login with email and password via Firebase Auth
-2. **Opportunities**: Browse a list of available opportunities on the opportunities page
-3. **Save/Bookmark**: Click the save button on any opportunity to add it to your dashboard
-4. **AI Matching**: 
-   - Navigate to "AI Match"
-   - Upload a CV (PDF, text) or paste CV text directly
-   - The app analyzes your CV and scores each opportunity based on skills, experience, and requirements
-   - View top matches with detailed reasoning for each score
-5. **Dashboard**: View all your saved opportunities in one organized place
+- Email/password authentication with Firebase Auth
+- Firestore-backed saved opportunities per user
+- AI CV matching via Google Gemini API
+- Fallback opportunity ranking when AI is unavailable
+- Personalized dashboard and saved opportunity tracking
+- Modern responsive UI and accessible components
 
-## Tech Stack
+## Tech stack
 
-### Frontend
-- **Next.js 13.5.1** - React framework with server-side rendering
-- **React 18.2.0** - UI library
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS 3.3.3** - Utility-first styling
-- **shadcn/ui + Radix UI** - Accessible component library
+- **Next.js 13.5.1**
+- **React 18.2**
+- **TypeScript**
+- **Tailwind CSS 3.3.3**
+- **shadcn/ui + Radix UI**
+- **Firebase** (Auth + Firestore)
+- **Google Gemini** (AI match endpoint)
+- **Netlify** deployment support
 
-### Backend & Services
-- **Firebase 12.13.0**
-  - **Firebase Auth** - Email/password authentication
-  - **Firestore** - NoSQL database for user profiles and saved opportunities
-- **Netlify** - Deployment platform
-
-## Getting Started
-
-### Prerequisites
-- Node.js 16+ and npm
-- Firebase project with Firestore and Auth enabled
-- Firebase credentials
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Opportunity-Finder
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   - Copy `.env.example` to `.env.local`
-   - Fill in your Firebase credentials:
-     ```
-     NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-     NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-     NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-     ```
-
-### Firebase Setup
-
-1. **Create a Firebase Project**
-   - Go to [Firebase Console](https://console.firebase.google.com)
-   - Create a new project
-
-2. **Enable Authentication**
-   - Go to **Authentication** → **Sign-in method**
-   - Enable **Email/Password** provider
-   - Click **Save**
-
-3. **Create Firestore Database**
-   - Go to **Firestore Database** → **Create database**
-   - Select **Production mode**
-   - Choose your preferred region
-   - Click **Create**
-
-4. **Configure Security Rules**
-   - In Firestore, go to **Rules** tab
-   - Replace with the following rules:
-     ```
-     rules_version = '2';
-     service cloud.firestore {
-       match /databases/{database}/documents {
-         match /users/{userId} {
-           allow read, write: if request.auth.uid == userId;
-           match /savedOpportunities/{document=**} {
-             allow read, write: if request.auth.uid == userId;
-           }
-         }
-       }
-     }
-     ```
-   - Click **Publish**
-
-### Running the App
-
-**Development mode**
-```bash
-npm run dev
-```
-The app will be available at `http://localhost:3000`
-
-**Build for production**
-```bash
-npm run build
-npm start
-```
-
-## Project Structure
+## Repository structure
 
 ```
 app/
-├── page.tsx              # Home page
-├── auth/                 # Authentication pages (signup/login)
-├── dashboard/            # User's saved opportunities
-├── ai-match/             # AI opportunity matching
-└── layout.tsx            # Root layout with AuthProvider
+├── page.tsx                # Home page
+├── auth/                   # Authentication pages
+├── dashboard/              # Saved opportunities dashboard
+├── ai-match/               # CV upload and AI matching page
+└── api/                    # Server API routes
+    └── ai-match/route.ts   # Gemini match API endpoint
 
 components/
-├── Navbar.tsx            # Navigation bar
-├── OpportunityCard.tsx   # Individual opportunity display
-└── ui/                   # shadcn/ui components
+├── Navbar.tsx              # Navigation bar component
+├── OpportunityCard.tsx     # Opportunity item UI
+└── ui/                     # shadcn/ui helper components
 
 contexts/
-└── AuthContext.tsx       # Global authentication state
+└── AuthContext.tsx         # Global auth state and hooks
 
 lib/
-├── firebase.ts           # Firebase initialization
-├── supabase.ts           # Database utilities
-└── utils.ts              # Helper functions
+├── firebase.ts             # Firebase initialization
+├── opportunities.ts        # Opportunity data and utility helpers
+├── opportunityInsights.ts  # AI ranking and fallback scoring logic
+└── utils.ts                # Shared helpers
+
 ```
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 16+
+- npm
+- Firebase project with Auth and Firestore enabled
+- Google Gemini API key
+
+### Installation
+
+```bash
+git clone <repository-url>
+cd Opportunity-Finder
+npm install
+```
+
+### Environment configuration
+
+Copy `.env.example` to `.env.local` and fill in your values:
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+GOOGLE_GEMINI_API_KEY=your_google_gemini_api_key
+```
+
+### Run locally
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser.
+
+## Firebase setup
+
+1. Create a Firebase project at https://console.firebase.google.com
+2. Enable **Email/Password** under Authentication → Sign-in method
+3. Create a Firestore database
+4. Add Firestore rules for secure per-user access:
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+      match /savedOpportunities/{document=**} {
+        allow read, write: if request.auth.uid == userId;
+      }
+    }
+  }
+}
+```
+
+## How the app works
+
+### Authentication
+
+Users sign up and log in via Firebase Auth. The app stores saved opportunities under `users/{userId}/savedOpportunities` in Firestore.
+
+### Opportunity browsing
+
+Opportunities are rendered from `lib/opportunities.ts` and displayed via `OpportunityCard` components.
+
+### AI matching
+
+The AI match page sends CV text to the server route at `/api/ai-match`. That route loads opportunity data and uses the Google Gemini API to return ranked match results.
+
+If Gemini is unavailable, the page falls back to local ranking logic from `lib/opportunityInsights.ts`.
 
 ## Usage
 
-### Sign Up
-1. Go to `http://localhost:3000/auth`
+### Sign up
+
+1. Visit `/auth`
 2. Enter email and password
-3. Click "Sign Up"
-4. You're automatically logged in
+3. Submit to create an account
 
-### Browse & Save Opportunities
-1. Navigate to the **Opportunities** page
-2. Browse available opportunities
-3. Click the **Save** button on any opportunity to bookmark it
-4. View saved opportunities in the **Dashboard**
+### Browse opportunities
 
-### Use AI Matching
-1. Go to **AI Match**
-2. Upload a CV file (PDF/text) or paste CV text
-3. Click **Find Matches**
-4. View opportunities ranked by match score with reasoning
+1. Navigate the opportunities section
+2. Read opportunity details
+3. Click **Save** to bookmark
 
-## Features
+### View dashboard
 
-- ✅ User authentication (email/password)
-- ✅ Browse opportunities
-- ✅ Save/bookmark opportunities
-- ✅ Persistent user dashboard
-- ✅ AI-powered CV-to-opportunity matching
-- ✅ Match scoring with detailed reasoning
-- ✅ Responsive design
-- ✅ TypeScript for type safety
+1. Visit `/dashboard`
+2. See saved opportunities and profile metrics
+3. Explore recommended matches based on saved tags
 
-## Environment Variables
+### Use AI matching
 
-See `.env.example` for a template. Required variables:
-- `NEXT_PUBLIC_FIREBASE_API_KEY`
-- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
-- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
-- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
-- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
-- `NEXT_PUBLIC_FIREBASE_APP_ID`
+1. Visit `/ai-match`
+2. Paste CV text or upload a `.txt` / `.pdf` file
+3. Click to analyze
+4. Review ranked matches with reasoning
 
 ## Deployment
 
-The project is configured for deployment on **Netlify**:
+This project is ready for Netlify deployment.
 
-1. Push code to GitHub
-2. Connect repository to Netlify
-3. Set environment variables in Netlify dashboard
-4. Deploy
+1. Push the repo to GitHub
+2. Connect the repo in Netlify
+3. Set the same environment variables in Netlify
+4. Deploy the site
+
+## Notes
+
+- AI matching depends on `GOOGLE_GEMINI_API_KEY`.
+- If the API fails, the app still returns local opportunity recommendations.
+- The UI is built with Tailwind CSS and reusable shadcn/ui components.
 
 ## License
 
-[Add your license here]
+Add your license information here.
