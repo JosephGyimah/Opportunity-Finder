@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
@@ -207,7 +208,7 @@ export default function DashboardPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 min-w-0">
                       {opportunity!.logo ? (
-                        <img src={opportunity!.logo} alt={opportunity!.organization} className="w-12 h-12 rounded-xl object-cover shrink-0 ring-1 ring-outline-variant/60" />
+                        <Image src={opportunity!.logo} alt={opportunity!.organization} className="w-12 h-12 rounded-xl object-cover shrink-0 ring-1 ring-outline-variant/60" width={48} height={48} />
                       ) : (
                         <div className="w-12 h-12 bg-surface-container rounded-xl flex items-center justify-center font-semibold text-primary text-lg shrink-0">
                           {opportunity!.organization.charAt(0)}

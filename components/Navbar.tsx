@@ -1,10 +1,27 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Compass, LayoutDashboard, LogOut, User, Menu, X, Sparkles, Search } from 'lucide-react';
+
+const fallbackSrc = '/favicon.svg';
+
+function NavLogo() {
+  const [imgSrc, setImgSrc] = useState('/opportunity-finder-logo.png');
+  return (
+    <Image
+      src={imgSrc}
+      alt="Opportunity Finder"
+      className="w-full h-full object-contain"
+      width={32}
+      height={32}
+      onError={() => setImgSrc(fallbackSrc)}
+    />
+  );
+}
 
 export default function Navbar() {
   const { user, signOut, loading } = useAuth();
@@ -30,16 +47,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-primary-container group-hover:bg-primary transition-colors shadow-[0_10px_30px_-12px_rgba(0,31,63,0.18)] p-1">
-              <img
-                src="/opportunity-finder-logo.png"
-                alt="Opportunity Finder"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  const img = e.currentTarget as HTMLImageElement;
-                  img.onerror = null;
-                  img.src = '/favicon.svg';
-                }}
-              />
+              <NavLogo />
             </div>
             <span className="text-primary font-semibold text-lg hidden sm:block">Opportunity Finder</span>
           </Link>

@@ -1,11 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Compass, Eye, EyeOff, ArrowRight, Sparkles, Linkedin, CheckCircle2 } from 'lucide-react';
+
+const fallbackSrc = '/favicon.svg';
+
+function SafeImage({ src, alt, className, width, height }: { src: string; alt: string; className: string; width: number; height: number }) {
+  const [imgSrc, setImgSrc] = useState(src);
+  return (
+    <Image
+      src={imgSrc}
+      alt={alt}
+      className={className}
+      width={width}
+      height={height}
+      onError={() => setImgSrc(fallbackSrc)}
+    />
+  );
+}
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -73,15 +90,12 @@ export default function AuthPage() {
           <div className="relative z-10 max-w-md text-center">
               <div className="flex items-center justify-center gap-3 mb-8">
               <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center shadow-lg shadow-[0_10px_30px_-12px_rgba(0,31,63,0.22)] p-1">
-                <img
+                <SafeImage
                   src="/opportunity-finder-logo.png"
                   alt="Opportunity Finder"
                   className="w-full h-full object-contain"
-                  onError={(e) => {
-                    const img = e.currentTarget as HTMLImageElement;
-                    img.onerror = null;
-                    img.src = '/favicon.svg';
-                  }}
+                  width={48}
+                  height={48}
                 />
               </div>
               <span className="text-2xl font-semibold tracking-tight">Opportunity Finder</span>
@@ -111,15 +125,12 @@ export default function AuthPage() {
           <div className="w-full max-w-md">
             <div className="lg:hidden flex items-center gap-2 mb-8">
               <div className="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center p-1">
-                <img
+                <SafeImage
                   src="/opportunity-finder-logo.png"
                   alt="Opportunity Finder"
                   className="w-full h-full object-contain"
-                  onError={(e) => {
-                    const img = e.currentTarget as HTMLImageElement;
-                    img.onerror = null;
-                    img.src = '/favicon.svg';
-                  }}
+                  width={36}
+                  height={36}
                 />
               </div>
               <span className="text-xl font-semibold tracking-tight text-primary">Opportunity Finder</span>

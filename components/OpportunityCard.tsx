@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Opportunity, typeColors, typeLabels } from '@/lib/opportunities';
 import { MapPin, Calendar, Bookmark, BookmarkCheck, ExternalLink, DollarSign } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -61,10 +62,12 @@ export default function OpportunityCard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">
           {opportunity.logo && (
-            <img
+            <Image
               src={opportunity.logo}
               alt={opportunity.organization}
               className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-outline-variant/60"
+              width={40}
+              height={40}
             />
           )}
           <div className="min-w-0">
